@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">IG Saver</string>
+    <string name="url_error">Url not found or it is from an IG story</string>
+    <string name="media_type_error">Could not recognize media type</string>
+    <string name="media_error">Could not find media</string>
+    <string name="enter_url">Enter url</string>
+    <string name="go">Go</string>
+    <string name="download">Download</string>
+    <string name="storage_permission_error">Storage permission denied</string>
+    <string name="download_message">File will be downloaded in Downloads/IGSaver</string>
+    <string name="download_all">Download All</string>
+
+    <plurals name="files_counter">
+        <item quantity="zero">No files found</item>
+        <item quantity="one">%d file found</item>
+        <item quantity="other">%d files found</item>
+    </plurals>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
