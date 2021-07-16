@@ -9,17 +9,16 @@ import com.android.volley.toolbox.Volley
 import com.goelapplications.igsaver.constants.Constants
 import com.goelapplications.igsaver.constants.Constants.URL_TOKEN
 import com.goelapplications.igsaver.constants.Keys
+import com.goelapplications.igsaver.constants.Keys.CAPTION
 import com.goelapplications.igsaver.constants.Keys.CHILDREN
 import com.goelapplications.igsaver.constants.Keys.DISPLAY_URL
 import com.goelapplications.igsaver.constants.Keys.EDGES
 import com.goelapplications.igsaver.constants.Keys.NODE
+import com.goelapplications.igsaver.constants.Keys.TEXT
 import com.goelapplications.igsaver.constants.Keys.TYPE
 import com.goelapplications.igsaver.constants.Keys.VIDEO_URL
 import com.goelapplications.igsaver.constants.MediaType
-import com.goelapplications.igsaver.listeners.MediaTypeListener
-import com.goelapplications.igsaver.listeners.RootListener
-import com.goelapplications.igsaver.listeners.SideCarListener
-import com.goelapplications.igsaver.listeners.UrlListener
+import com.goelapplications.igsaver.listeners.*
 import com.goelapplications.igsaver.models.MediaModel
 import org.json.JSONException
 import org.json.JSONObject
@@ -55,6 +54,16 @@ class UrlParser(context: Context, url: String) {
                 Constants.TYPE_MULTIPLE -> listener.mediaTypeFound(MediaType.TYPE_SIDECAR)
                 else -> { listener.onError() }
             }
+        } catch (e: JSONException) {
+            listener.onError()
+        }
+    }
+
+    fun getCaption(jsonObject: JSONObject, listener: CaptionListener) {
+        try {
+            val caption = jsonObject.getJSONObject(CAPTION).getJSONArray(EDGES).getJSONObject(0)
+                .getJSONObject(NODE).getString(TEXT)
+            listener.onCaptionRetrieved(caption)
         } catch (e: JSONException) {
             listener.onError()
         }

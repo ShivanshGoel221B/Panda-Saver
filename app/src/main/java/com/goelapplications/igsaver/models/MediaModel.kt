@@ -4,5 +4,6 @@ import com.goelapplications.igsaver.constants.MediaType
 import com.goelapplications.igsaver.constants.PostType
 
 data class MediaModel(var mediaType: MediaType,
+                      var caption: String = "",
                       var downloadUrl: String? = null,
                       var thumbnailUrl: String? = null)

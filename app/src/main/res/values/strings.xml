@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IG Saver</string>
+    <string name="app_name">Panda Saver</string>
     <string name="url_error">Url not found or it is from an IG story</string>
     <string name="media_type_error">Could not recognize media type</string>
     <string name="media_error">Could not find media</string>
@@ -15,6 +15,15 @@
         <item quantity="one">%d file found</item>
         <item quantity="other">%d files found</item>
     </plurals>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="caption">Caption</string>
+    <string name="hashtags">Hashtags</string>
+    <string name="copy">Copy</string>
+    <string name="copied">Text Copied</string>
+    <string name="paste">Paste</string>
+    <string name="empty_clipboard">No URL to paste</string>
+
+<!--    Ads-->
+    <string name="ad_id_main_activity_top">ca-app-pub-8134067421232927/2113856701</string>
+    <string name="ad_id_main_activity_bottom">ca-app-pub-8134067421232927/8740928517</string>
+    <string name="ad_id_result_activity">ca-app-pub-8134067421232927/5263883788</string>
 </resources>

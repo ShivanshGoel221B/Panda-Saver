@@ -1,15 +1,18 @@
 package com.goelapplications.igsaver
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.webkit.DownloadListener
 import android.widget.MediaController
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.goelapplications.igsaver.adapters.SideCarAdapter
@@ -28,11 +31,11 @@ class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
 
     companion object {
         @JvmStatic
-        private lateinit var model: MediaModel
+        lateinit var model: MediaModel
         @JvmStatic
-        private lateinit var parser: UrlParser
+        lateinit var parser: UrlParser
         @JvmStatic
-        private lateinit var rootObject: JSONObject
+        lateinit var rootObject: JSONObject
     }
 
     private lateinit var binding: ActivityResultBinding
@@ -41,6 +44,7 @@ class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
     private lateinit var adapter: SideCarAdapter
     private lateinit var downloadUrl: String
     private lateinit var mediaType: MediaType
+    private lateinit var clipboard: ClipboardManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,8 +55,35 @@ class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
             createMediaFragment()
         else
             loadMedia()
+
+        loadCaptions()
+
         MobileAds.initialize(this)
         initializeAds()
+    }
+
+    private fun loadCaptions() {
+        try {
+            binding.captionCard.visibility = View.VISIBLE
+            binding.caption.text = model.caption.getRawText()
+            binding.copyCaption.setOnClickListener { copyText(binding.caption.text) }
+        } catch (e: Exception) {
+            binding.captionCard.visibility = View.GONE
+        }
+        try {
+            binding.hashtagCard.visibility = View.VISIBLE
+            binding.hashtags.text = model.caption.getHashTags()
+            binding.copyHashtags.setOnClickListener { copyText(binding.hashtags.text) }
+        } catch (e: Exception) {
+            binding.hashtagCard.visibility = View.GONE
+        }
+    }
+
+    private fun copyText(text: CharSequence?) {
+        clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip: ClipData = ClipData.newPlainText("Caption/Hashtag", text)
+        clipboard.setPrimaryClip(clip)
+        showToast(R.string.copied)
     }
 
     private fun initializeAds() {
@@ -60,27 +91,7 @@ class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
         binding.adView.loadAd(adRequest)
 
         binding.adView.adListener = object: AdListener() {
-            override fun onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
-            }
-
-            override fun onAdFailedToLoad(adError : LoadAdError) {
-                // Code to be executed when an ad request fails.
-            }
-
-            override fun onAdOpened() {
-                // Code to be executed when an ad opens an overlay that
-                // covers the screen.
-            }
-
-            override fun onAdClicked() {
-                // Code to be executed when the user clicks on an ad.
-            }
-
-            override fun onAdClosed() {
-                // Code to be executed when the user is about to return
-                // to the app after tapping on an ad.
-            }
+            override fun onAdFailedToLoad(adError : LoadAdError) { super.onAdFailedToLoad(adError) }
         }
     }
 
@@ -92,19 +103,28 @@ class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
     }
 
     private fun showContent(type: MediaType) {
+        val cardParams = binding.captionCard.layoutParams as ConstraintLayout.LayoutParams
+        val buttonParams = binding.downloadButton.layoutParams as ConstraintLayout.LayoutParams
         when (type) {
             MediaType.TYPE_IMAGE -> {
                 binding.imageView.visibility = View.VISIBLE
                 binding.downloadButton.visibility = View.VISIBLE
+                buttonParams.topToBottom = R.id.imageView
+                cardParams.topToBottom = R.id.download_button
             }
             MediaType.TYPE_VIDEO -> {
                 binding.videoView.visibility = View.VISIBLE
                 binding.downloadButton.visibility = View.VISIBLE
+                buttonParams.topToBottom = R.id.video_view
+                cardParams.topToBottom = R.id.download_button
             }
             else -> {
                 binding.sidecar.root.visibility = View.VISIBLE
+                cardParams.topToBottom = R.id.sidecar
             }
         }
+        binding.downloadButton.requestLayout()
+        binding.captionCard.requestLayout()
     }
 
     private fun createMediaFragment() {
@@ -217,5 +237,27 @@ class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
     override fun onBackPressed() {
         super.onBackPressed()
         binding.frameContainer.visibility = View.GONE
+    }
+
+    // Extension Functions
+
+    private fun String.getRawText(): String {
+        val frags = this.split(' ', '\n')
+        var caption = ""
+        frags.forEach {
+            if (!it.contains('#'))
+                caption += "$it "
+        }
+        return caption
+    }
+
+    private fun String.getHashTags(): String {
+        val frags = this.split(' ', '\n')
+        var hashtags = ""
+        frags.forEach {
+            if (it[0] == '#')
+                hashtags += "$it\n"
+        }
+        return hashtags
     }
 }

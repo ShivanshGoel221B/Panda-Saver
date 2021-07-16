@@ -22,6 +22,7 @@
             android:value="ca-app-pub-8134067421232927~2829292135"/>
 
         <activity android:name=".ResultActivity"
+            android:parentActivityName=".MainActivity"
             android:hardwareAccelerated="true"/>
         <activity android:name=".MainActivity"
             android:hardwareAccelerated="true">
