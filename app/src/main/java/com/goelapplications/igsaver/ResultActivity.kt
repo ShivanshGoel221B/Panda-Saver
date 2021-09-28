@@ -25,6 +25,8 @@ import com.goelapplications.igsaver.models.MediaModel
 import com.goelapplications.igsaver.utils.DownloadUtil
 import com.goelapplications.igsaver.utils.UrlParser
 import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import org.json.JSONObject
 
 class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
@@ -149,13 +151,6 @@ class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
             }
         })
         showContent(MediaType.TYPE_SIDECAR)
-        binding.sidecar.downloadAllButton.setOnClickListener {
-            modelList.forEach { mediaModel ->
-                downloadUrl = mediaModel.downloadUrl!!
-                mediaType = mediaModel.mediaType
-                initializeDownload()
-            }
-        }
     }
 
     private fun loadMedia() {
@@ -205,8 +200,32 @@ class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
     }
 
     private fun startDownload() {
+        loadInterstitial()
         downloadUtil.startDownload(downloadUrl, mediaType)
         showToast(R.string.download_message)
+    }
+
+    private fun loadInterstitial() {
+        var mInterstitialAd: InterstitialAd? = null
+        val adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(this,getString(R.string.ad_id_after_download), adRequest, object : InterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                mInterstitialAd = null
+            }
+            override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                mInterstitialAd = interstitialAd
+                mInterstitialAd?.show(this@ResultActivity)
+            }
+        })
+
+        mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+            }
+            override fun onAdShowedFullScreenContent() {
+                mInterstitialAd = null
+            }
+        }
     }
 
     private fun showToast(resId: Int) {
@@ -252,11 +271,11 @@ class ResultActivity : AppCompatActivity(), SideCarAdapter.ClickListeners {
     }
 
     private fun String.getHashTags(): String {
-        val frags = this.split(' ', '\n')
+        val frags = this.split(' ', '\n', '.', ',')
         var hashtags = ""
         frags.forEach {
-            if (it[0] == '#')
-                hashtags += "$it\n"
+            if (it.contains('#'))
+                hashtags += "${it.trim()}\n"
         }
         return hashtags
     }

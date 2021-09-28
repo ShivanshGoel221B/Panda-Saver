@@ -15,7 +15,7 @@ class DownloadUtil(private val context: Context) {
         val fileName = System.currentTimeMillis().toString()+
                 if (mediaType == MediaType.TYPE_IMAGE) ".jpg"
                 else ".mp4"
-        val filePath = "IGSaver/$fileName"
+        val filePath = "PandaSaver/$fileName"
         request.setDescription("Downloading Media")
         request.allowScanningByMediaScanner()
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)

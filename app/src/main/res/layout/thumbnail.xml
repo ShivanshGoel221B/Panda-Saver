@@ -39,7 +39,8 @@
             android:paddingBottom="4dp"
             android:layout_marginEnd="5dp"
             android:background="@color/primary_color"
-            android:src="@drawable/ic_eye" />
+            android:src="@drawable/ic_eye"
+            app:tint="@color/white" />
 
         <ImageButton
             android:id="@+id/download_button"
@@ -49,6 +50,7 @@
             android:layout_marginStart="5dp"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
+            app:tint="@color/white"
             android:background="@color/primary_color"
             android:src="@drawable/ic_download" />
     </LinearLayout>

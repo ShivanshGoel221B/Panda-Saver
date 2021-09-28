@@ -4,6 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black_tinted">#CC000000</color>
 
-    <color name="primary_color">#F1DA15</color>
-    <color name="text_color">#D8A200</color>
+    <color name="primary_color">#00b894</color>
+    <color name="text_color">#101010</color>
 </resources>
